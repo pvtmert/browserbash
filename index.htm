@@ -1,73 +1,75 @@
 <!doctype html>
 <html>
-  <head>
-    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" charset="utf-8">
-      var socket = io('http://localhost:8080')
-      
-      function add_content(bashOutput){
-        $('div').append('<p>' + bashOutput + '</p>');
-        var scrolledWindow = $('body').height() - $(window).height() + 80
-        $(window).scrollTop(scrolledWindow);
-      }
-      
-      //socket io listeners
-      socket.on('connect',function() {
-        console.log('Client has connected to the server!');
-      });
-      
-      socket.on('exit', function(data){
-        add_content(data);
-      })
-      
-      socket.on('message', function(data) {
-        var buf = String.fromCharCode.apply(null, new Uint8Array(data));
-        add_content(buf);
-      });
-      
-      //jquery form and page handling
-      $(document).ready(function(){
-        $('form').submit(function(event){
-          var input = $('input');
-          socket.send(input.val());
+	<head>
+		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var socket = io(/*window.location.toString(), { path: window.location.pathname + "./socket.io" }*/)
+			
+			function add_content(bashOutput){
+				$('div').append('<p>' + bashOutput + '</p>');
+				var scrolledWindow = $('body').height() - $(window).height() + 80
+				$(window).scrollTop(scrolledWindow);
+			}
+			
+			//socket io listeners
+			socket.on('connect',function() {
+				console.log('Client has connected to the server!');
+			});
+			
+			socket.on('exit', function(data){
+				add_content(data);
+			})
+			
+			socket.on('message', function(data) {
+				var buf = String.fromCharCode.apply(null, new Uint8Array(data));
+				add_content(buf);
+			});
+			
+			//jquery form and page handling
+			$(document).ready(function(){
+				$('form').submit(function(event){
+					var input = $('input');
+					socket.send(input.val());
 
-          //clean the prompt
-          input.val(''); 
+					//clean the prompt
+					input.val(''); 
 
-          //leave the content on the page
-          return false;
-        });
+					//leave the content on the page
+					return false;
+				});
 
-        //let a cursor focus on the input when the page is loaded
-        $('input').focus();
-      });
-    </script> 
+				//let a cursor focus on the input when the page is loaded
+				$('input').focus();
+			});
+		</script> 
 
-    <style type="text/css">
-      body, p, input {
-        font-family: fixed;
-        font-size: 13px;
-        border: none;
-      }
-      p { 
-        white-space: pre; 
-      }
-      p, form, input { 
-        margin:0; padding:0; 
-      }
-      input:focus { 
-        outline: none; 
-        border: none; 
-      }
-    </style>
-  </head>
+		<style type="text/css">
+			body, p, input {
+				font-family: monaco, fixed, monospace;
+				font-size: 12px;
+				border: none;
+				background-color:#222;
+				color:#eee;
+			}
+			p { 
+				white-space: pre; 
+			}
+			p, form, input { 
+				margin:0; padding:0; 
+			}
+			input:focus, input {
+				width:calc(100% - 24px);
+				outline: none; 
+				border:none;
+				display:inline-block;
+			}
+		</style>
+	</head>
 
-  <body>
-    <div></div>
-    <form>
-      &gt; <input>
-    </form>
-  </body>
+	<body>
+		<div></div>
+		<form><label for=cmd >&gt; </label><input id=cmd /></form>
+	</body>
 
 </html>

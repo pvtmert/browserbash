@@ -5,7 +5,7 @@ const io = require('socket.io')(server);
 const spawn = require('child_process').spawn;
 const sh = spawn('bash');
 
-app.use(express.static('./'))
+app.use("/" ,express.static(require("path").dirname(module.filename), { index:"index.htm" }))
 
 sh.stdout.on('data', function(data) {
   io.emit('message', data);
@@ -26,6 +26,6 @@ io.on('connection', function(client){
   });
 });
 
-server.listen(8080, function(){
-  console.log('server started');
+server.listen((process.argv.length < 3)?8080:process.argv[2], function(){
+  console.log('server started', process.argv);
 })
